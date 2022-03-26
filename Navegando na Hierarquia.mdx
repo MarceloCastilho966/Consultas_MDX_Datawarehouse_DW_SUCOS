@@ -1,0 +1,37 @@
+--- .Children
+
+select ( { [Cliente].[Hierarquia Geográfica].[Nível Região].&[Sudeste].Children } ) on rows,
+( { [Tempo].[Mês e Ano].&[2014]&[01-2014]&[01-2014]&[01-2014] :
+[Tempo].[Mês e Ano].&[2014]&[02-2014]&[04-2014]&[12-2014] } ) on columns
+from [COMPLETO]
+where [Measures].[Faturamento]
+
+-------------------------------------------------------------
+
+-- .Parent
+
+select ( { [Cliente].[Hierarquia Geográfica].[Nível Região].&[Sul].&[Rio Grande do Sul].Parent } ) on rows,
+( { [Tempo].[Mês e Ano].&[2014]&[01-2014]&[01-2014]&[01-2014] :
+[Tempo].[Mês e Ano].&[2014]&[02-2014]&[04-2014]&[12-2014] } ) on columns
+from [COMPLETO]
+where [Measures].[Faturamento]
+
+-------------------------------------------------------------
+
+-- Descendants()
+
+select ( {Descendants([Cliente].[Hierarquia Geográfica].[Nível Região].&[Sul].&[Rio Grande do Sul]) } ) on rows,
+( { [Tempo].[Mês e Ano].&[2014]&[01-2014]&[01-2014]&[01-2014] :
+[Tempo].[Mês e Ano].&[2014]&[02-2014]&[04-2014]&[12-2014] } ) on columns
+from [COMPLETO]
+where [Measures].[Faturamento]
+
+-------------------------------------------------------------
+
+-- Ascendants()
+
+select ( {Ascendants([Cliente].[Hierarquia Geográfica].[Nível Região].&[Sul].&[Rio Grande do Sul].&[Porto Alegre].&[Delícias Lanches Porto Alegre - RS]) } ) on rows,
+( { [Tempo].[Mês e Ano].&[2014]&[01-2014]&[01-2014]&[01-2014] :
+[Tempo].[Mês e Ano].&[2014]&[02-2014]&[04-2014]&[12-2014] } ) on columns
+from [COMPLETO]
+where [Measures].[Faturamento]

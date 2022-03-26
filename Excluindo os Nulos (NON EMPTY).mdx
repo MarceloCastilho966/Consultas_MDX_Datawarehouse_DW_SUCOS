@@ -1,0 +1,7 @@
+-- Cláusula NON EMPTY ( Elimina os Nulos da Consulta )
+
+
+Select Non Empty ( { [Produto].[Produto].Members } ) On Rows,
+( { [Measures].[Faturamento] } ) On Columns
+From [COMPLETO]
+Where ([Cliente].[Hierarquia Geográfica].[Nível Região].&[Centro Oeste].&[Distrito Federal].&[Brasília].&[Drogas Super Brasília - DF])

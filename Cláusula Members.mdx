@@ -1,0 +1,17 @@
+-- Ver o faturamento de cada Estado
+
+Select ( { [Cliente].[Estado].Members } ) on rows,
+( { [Tempo].[Mês e Ano].&[2014]&[01-2014]&[01-2014]&[01-2014] : 
+[Tempo].[Mês e Ano].&[2014]&[01-2014]&[02-2014]&[06-2014] } ) on columns
+from [COMPLETO]
+where [Measures].[Faturamento]
+
+--------------------------------------------------------------------------
+
+-- Ver o faturamento de cada Cidade
+
+Select ( { [Cliente].[Cidade].Members } ) on rows,
+( { [Tempo].[Mês e Ano].&[2014]&[01-2014]&[01-2014]&[01-2014] : 
+[Tempo].[Mês e Ano].&[2014]&[01-2014]&[02-2014]&[06-2014] } ) on columns
+from [COMPLETO]
+where [Measures].[Faturamento]
