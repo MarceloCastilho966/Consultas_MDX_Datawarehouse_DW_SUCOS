@@ -1,0 +1,77 @@
+Select ( { [Produto].[Categoria].Members } ) On Rows,
+( { [Measures].[Faturamento], [Measures].[Faturamento Liquido] } ) On Columns
+From [COMPLETO]
+Where [Tempo].[Ano].&[2014]
+
+----------------------------------------------------
+
+-- Recriando Faturamento Liquido com WITH 
+
+WITH
+MEMBER [Measures].[Novo Faturamento Liquido] AS 
+'[Measures].[Faturamento] - [Measures].[Frete Rateio] - [Measures].[Imposto]'
+Select ( { [Produto].[Categoria].Members } ) On Rows,
+( { [Measures].[Faturamento], [Measures].[Faturamento Liquido], [Measures].[Novo Faturamento Liquido] } )
+On Columns
+From [COMPLETO]
+Where [Tempo].[Ano].&[2014]
+
+----------------------------------------------------
+
+-- Crição da variação do faturamento
+
+WITH
+MEMBER [Measures].[Novo Faturamento Liquido] AS 
+'[Measures].[Faturamento] - [Measures].[Frete Rateio] - [Measures].[Imposto]'
+MEMBER [Measures].[Variação Faturamento] AS 
+'[Measures].[Faturamento Liquido] / [Measures].[Faturamento]'
+Select non empty ( { [Produto].[Categoria].Members } ) On Rows,
+( { [Measures].[Faturamento], [Measures].[Faturamento Liquido], [Measures].[Novo Faturamento Liquido], 
+[Measures].[Variação Faturamento]} )On Columns
+From [COMPLETO]
+Where [Tempo].[Ano].&[2014]
+
+----------------------------------------------------
+
+-- Formatando para melhor exibição 
+
+WITH
+MEMBER [Measures].[Novo Faturamento Liquido] AS 
+'[Measures].[Faturamento] - [Measures].[Frete Rateio] - [Measures].[Imposto]', 
+FORMAT_STRING = '#,###.##'
+MEMBER [Measures].[Variação Faturamento] AS 
+'[Measures].[Faturamento Liquido] / [Measures].[Faturamento]', 
+FORMAT_STRING = '#,###.## %'
+Select non empty ( { [Produto].[Categoria].Members } ) On Rows,
+( { [Measures].[Faturamento], [Measures].[Faturamento Liquido], [Measures].[Novo Faturamento Liquido], 
+[Measures].[Variação Faturamento]} )On Columns
+From [COMPLETO]
+Where [Tempo].[Ano].&[2014]
+
+----------------------------------------------------
+----------------------------------------------------
+----------------------------------------------------
+
+-- Nova Consulta
+
+Select ( { [Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[01-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[02-2013] } ) On Columns,
+( { [Produto].[Marca].Members } ) On Rows
+From [COMPLETO]
+Where [Measures].[Faturamento]
+
+----------------------------------------------------
+
+--
+
+WITH
+MEMBER [Tempo].[Mês e Ano].[Var Fev Jan] AS 
+'(1 - ([Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[01-2013] / 
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[02-2013] ) )',
+FORMAT_STRING = '#,###.00 %'
+Select ( { [Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[01-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[02-2013], [Tempo].[Mês e Ano].[Var Fev Jan] } ) On Columns,
+( { [Produto].[Marca].Members } ) On Rows
+From [COMPLETO]
+Where [Measures].[Faturamento]
+
