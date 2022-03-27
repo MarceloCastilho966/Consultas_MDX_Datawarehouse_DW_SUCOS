@@ -1,0 +1,31 @@
+Select ( { [Produto].[Hierarquia de Produtos].[Nível Marca].Members } ) On Rows,
+( { [Measures].[Faturamento] } ) On Columns
+From [COMPLETO]
+Where [Tempo].[Ano].&[2014]
+
+-- Usando FILTER para pegar apenas os acima de 10milhões
+
+Select 
+FILTER (
+( { [Produto].[Hierarquia de Produtos].[Nível Marca].Members } ) 
+,[Measures].[Faturamento] >= 10000000)
+On Rows,
+( { [Measures].[Faturamento] } ) On Columns
+From [COMPLETO]
+Where [Tempo].[Ano].&[2014]
+
+--------------------------------------------------------
+
+--Usando ORDER dentro de FILTER
+
+Select 
+FILTER (
+ORDER (
+( { [Produto].[Hierarquia de Produtos].[Nível Marca].Members } ) 
+,[Measures].[Faturamento], BDESC 
+)
+,[Measures].[Faturamento] >= 7000000)
+On Rows,
+( { [Measures].[Faturamento] } ) On Columns
+From [COMPLETO]
+Where [Tempo].[Ano].&[2014]

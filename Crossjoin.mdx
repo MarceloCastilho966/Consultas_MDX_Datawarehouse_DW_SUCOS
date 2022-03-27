@@ -1,0 +1,39 @@
+-- ( Crossjoin ) 
+Select Non Empty ( Crossjoin ( { [Measures].[Faturamento], [Measures].[Margem] }, 
+{[Cliente].[Estado].&[São Paulo], [Cliente].[Estado].&[Rio de Janeiro] } ) ) On Rows,
+( { [Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[01-2013] :
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[06-2013] } ) On Columns
+From [COMPLETO]
+
+----------------------------------
+
+-- Um Crossjoin dentro do outro
+
+Select Non Empty ( Crossjoin ( { [Produto].[Marca].&[Frescor do Verão], [Produto].[Marca].&[Pedaços de Frutas] },
+( Crossjoin ( { [Measures].[Faturamento], [Measures].[Margem] }, 
+{[Cliente].[Estado].&[São Paulo], [Cliente].[Estado].&[Rio de Janeiro] } ) ) ) ) On Rows,
+( { [Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[01-2013] :
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[06-2013] } ) On Columns
+From [COMPLETO]
+
+----------------------------------
+
+-- Crossjoin sem o Non Empty
+
+Select ( Crossjoin ( { [Produto].[Produto].Members },
+( Crossjoin ( { [Measures].[Faturamento], [Measures].[Margem] }, 
+{ [Cliente].[Cliente].Members } ) ) ) ) On Rows,
+( { [Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[01-2013] :
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[06-2013] } ) On Columns
+From [COMPLETO]
+
+----------------------------------
+
+--Crossjoin com o Non Empty
+
+Select Non Empty ( Crossjoin ( { [Produto].[Produto].Members },
+( Crossjoin ( { [Measures].[Faturamento], [Measures].[Margem] }, 
+{ [Cliente].[Cliente].Members } ) ) ) ) On Rows,
+( { [Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[01-2013] :
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[06-2013] } ) On Columns
+From [COMPLETO]

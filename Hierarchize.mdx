@@ -1,0 +1,18 @@
+Select ( { [Cliente].[Estado].&[São Paulo], [Cliente].[Estado].&[Goiais], [Cliente].[Estado].&[Paraná],
+[Cliente].[Estado].&[Bahia] } ) On Rows,
+( { [Tempo].[Semestre e Ano].Members } ) On Columns
+From [COMPLETO]
+
+-- Hierarchize (Respeita a ordem das hierarquias)
+
+Select Hierarchize( { [Cliente].[Estado].&[São Paulo], [Cliente].[Estado].&[Goiais], [Cliente].[Estado].&[Paraná],
+[Cliente].[Estado].&[Bahia] } ) On Rows,
+( { [Tempo].[Semestre e Ano].Members } ) On Columns
+From [COMPLETO]
+
+-- Funciona para linhas e colunas
+
+Select Hierarchize( { [Cliente].[Estado].&[São Paulo], [Cliente].[Estado].&[Goiais], [Cliente].[Estado].&[Paraná],
+[Cliente].[Estado].&[Bahia] } ) On Columns,
+( { [Tempo].[Semestre e Ano].Members } ) On Rows
+From [COMPLETO]
