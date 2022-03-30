@@ -1,0 +1,40 @@
+Select ( { 
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[01-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[02-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[03-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[04-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[05-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[06-2013] } ) On Rows,
+( { [Measures].[Faturamento Liquido] } ) On Columns
+From [COMPLETO]
+
+--Named Set ( Da um nome para sua seleção, facilitando sua consulta depois)
+
+WITH SET [6 Primeiros meses de 2013] AS 
+'{
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[01-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[02-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[03-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[04-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[05-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[06-2013]}'
+Select [6 Primeiros meses de 2013] On Rows,
+( { [Measures].[Faturamento Liquido] } ) On Columns
+From [COMPLETO]
+
+--------------------------------------------------------
+
+WITH SET [6 Primeiros meses de 2013] AS 
+'{
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[01-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[02-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[01-2013]&[03-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[04-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[05-2013],
+[Tempo].[Mês e Ano].&[2013]&[01-2013]&[02-2013]&[06-2013]}'
+MEMBER [Tempo].[Mês e Ano].[Soma dos Primeiros Meses de 2013] AS
+'SUM([6 Primeiros meses de 2013], [Measures].[Faturamento Liquido])'
+Select ( { [6 Primeiros meses de 2013], [Tempo].[Mês e Ano].[Soma dos Primeiros Meses de 2013] } )
+On Rows,
+( { [Measures].[Faturamento Liquido] } ) On Columns
+From [COMPLETO]

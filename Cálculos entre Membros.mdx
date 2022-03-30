@@ -1,0 +1,89 @@
+Select Non Empty ( { 
+[Tempo].[Hierarquia do Mês e Ano].[Ano].&[2013].&[Primeiro Semestre 2013].&[2013]&[01-2013]&[01-2013]. Children})
+On Rows,
+( { [Measures].[Faturamento] } ) On Columns
+From [COMPLETO]
+
+----------------------------------------------
+
+-- Criamos o Cálculo do Faturamento do primeiro trimestre. ( pegando cada mes e dividindo pelo total do trimestre)
+
+
+WITH MEMBER [Measures].[% Taxa Variação] AS
+'[Measures].[Faturamento] / 
+([Measures].[Faturamento],[Tempo].[Hierarquia do Mês e Ano].[Ano].&[2013].&[Primeiro Semestre 2013].&[2013]&[01-2013]&[01-2013] )',
+FORMAT_STRING = '#,###.## %'
+Select Non Empty ( { 
+[Tempo].[Hierarquia do Mês e Ano].[Ano].&[2013].&[Primeiro Semestre 2013].&[2013]&[01-2013]&[01-2013]. Children})
+On Rows,
+( { [Measures].[Faturamento], [Measures].[% Taxa Variação] } ) On Columns
+From [COMPLETO]
+
+----------------------------------------------
+
+-- .Currentmember (Neste caso selecionamos a Hierarquia completa) e usamos o .Parent para dizer quais sao os membros (semestre)
+
+
+WITH MEMBER [Measures].[% Taxa Variação] AS
+'[Measures].[Faturamento] / 
+([Measures].[Faturamento], [Tempo].[Hierarquia do Mês e Ano].Currentmember.Parent)',
+FORMAT_STRING = '#,###.## %'
+Select Non Empty ( { 
+[Tempo].[Hierarquia do Mês e Ano].[Ano].&[2013].&[Primeiro Semestre 2013].Children})
+On Rows,
+( { [Measures].[Faturamento], [Measures].[% Taxa Variação] } ) On Columns
+From [COMPLETO]
+
+-------------------------------------------------
+
+-- Neste caso selecionamos para ver todos os meses registrados, olhando a taxa por trimestre
+
+WITH MEMBER [Measures].[% Taxa Variação Trimestre] AS
+'[Measures].[Faturamento] / 
+([Measures].[Faturamento], [Tempo].[Hierarquia do Mês e Ano].Currentmember.Parent)',
+FORMAT_STRING = '#,###.## %'
+Select Non Empty ( { 
+[Tempo].[Hierarquia do Mês e Ano].[Nível Mês e Ano].Members
+}) On Rows,
+( { [Measures].[Faturamento], [Measures].[% Taxa Variação Trimestre] } ) On Columns
+From [COMPLETO]
+
+------------------------------------------------
+
+-- Neste caso usamos o .Parent 2x, assim vemos por trimestre e por semestre
+
+WITH MEMBER [Measures].[% Taxa Variação Trimestre] AS
+'[Measures].[Faturamento] / 
+([Measures].[Faturamento], [Tempo].[Hierarquia do Mês e Ano].Currentmember.Parent)',
+FORMAT_STRING = '#,###.## %'
+MEMBER [Measures].[% Taxa Variação Semestre] AS
+'[Measures].[Faturamento] / 
+([Measures].[Faturamento], [Tempo].[Hierarquia do Mês e Ano].Currentmember.Parent.Parent)',
+FORMAT_STRING = '#,###.## %'
+Select Non Empty ( { 
+[Tempo].[Hierarquia do Mês e Ano].[Nível Mês e Ano].Members
+}) On Rows,
+( { [Measures].[Faturamento], [Measures].[% Taxa Variação Trimestre],[Measures].[% Taxa Variação Semestre] } ) On Columns
+From [COMPLETO]
+
+-------------------------------------------------
+
+-- Usando o .Parent mais uma vez conseguimnos ver o Ano
+
+WITH MEMBER [Measures].[% Taxa Variação Trimestre] AS
+'[Measures].[Faturamento] / 
+([Measures].[Faturamento], [Tempo].[Hierarquia do Mês e Ano].Currentmember.Parent)',
+FORMAT_STRING = '#,###.## %'
+MEMBER [Measures].[% Taxa Variação Semestre] AS
+'[Measures].[Faturamento] / 
+([Measures].[Faturamento], [Tempo].[Hierarquia do Mês e Ano].Currentmember.Parent.Parent)',
+FORMAT_STRING = '#,###.## %'
+MEMBER [Measures].[% Taxa Variação Ano] AS
+'[Measures].[Faturamento] / 
+([Measures].[Faturamento], [Tempo].[Hierarquia do Mês e Ano].Currentmember.Parent.Parent.Parent)',
+FORMAT_STRING = '#,###.## %'
+Select Non Empty ( { 
+[Tempo].[Hierarquia do Mês e Ano].[Nível Mês e Ano].Members
+}) On Rows,
+( { [Measures].[Faturamento], [Measures].[% Taxa Variação Trimestre], [Measures].[% Taxa Variação Semestre], [Measures].[% Taxa Variação Ano] } ) On Columns
+From [COMPLETO]

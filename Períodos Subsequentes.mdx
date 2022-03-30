@@ -1,0 +1,29 @@
+Select Non Empty ( {[Tempo].[Hierarquia do Mês e Ano].[Nível Mês e Ano].Members } ) On Rows,
+( { [Measures].[Faturamento] } ) On Columns
+From [COMPLETO]
+
+-------------------------------------------
+
+-- Dessa Maneira consigo olhar a diferença entre o meu faturamento, com o faturamento do mes anterior ( .PrevMember)
+
+WITH MEMBER [Measures].[Variação Faturamento] AS
+'[Measures].[Faturamento] - ([Measures].[Faturamento], [Tempo].[Hierarquia do Mês e Ano].Currentmember.PrevMember)',
+FORMAT_STRING = '##,###.00'
+Select Non Empty ( {[Tempo].[Hierarquia do Mês e Ano].[Nível Mês e Ano].Members } ) On Rows,
+( { [Measures].[Faturamento],[Measures].[Variação Faturamento] } ) On Columns
+From [COMPLETO]
+
+----------------------------------------------
+
+-- Desta forma conseguimos analisar com Percentual 
+
+WITH MEMBER [Measures].[Variação Faturamento] AS
+'[Measures].[Faturamento] - ([Measures].[Faturamento], [Tempo].[Hierarquia do Mês e Ano].Currentmember.PrevMember)',
+FORMAT_STRING = '##,###.00'
+MEMBER [Measures].[Variação Faturamento Percentual] AS
+'(([Measures].[Faturamento],[Tempo].[Hierarquia do Mês e Ano].Currentmember) /
+([Measures].[Faturamento], [Tempo].[Hierarquia do Mês e Ano].Currentmember.PrevMember)) - 1',
+FORMAT_STRING = '##,###.00 %'
+Select Non Empty ( {[Tempo].[Hierarquia do Mês e Ano].[Nível Mês e Ano].Members } ) On Rows,
+( { [Measures].[Faturamento],[Measures].[Variação Faturamento Percentual] } ) On Columns
+From [COMPLETO]
