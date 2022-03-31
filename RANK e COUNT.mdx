@@ -1,0 +1,64 @@
+
+WITH MEMBER [Measures].[Faturamento de Vendas] AS
+'[Measures].[Faturamento]', FORMAT_STRING = '#,###.##'
+Select ( {[Cliente].[Hierarquia Geográfica].[Nível Cidade].Members } ) On Rows,
+( { [Measures].[Faturamento de Vendas] } ) On Columns 
+From [COMPLETO]
+WHERE [Tempo].[Ano].&[2014]
+
+---------------------------------------------
+
+-- Utilizamos o NAMED SET para facilitar
+
+WITH SET [Cidades] AS
+'[Cliente].[Hierarquia Geográfica].[Nível Cidade].Members'
+MEMBER [Measures].[Faturamento de Vendas] AS
+'[Measures].[Faturamento]', FORMAT_STRING = '#,###.##'
+Select ( { [Cidades] } ) On Rows,
+( { [Measures].[Faturamento de Vendas] } ) On Columns 
+From [COMPLETO]
+WHERE [Tempo].[Ano].&[2014]
+
+-- Destro do NAMED SET, ja conseguimos usar o Order 
+
+WITH SET [Cidades] AS
+'ORDER ( [Cliente].[Hierarquia Geográfica].[Nível Cidade].Members, [Measures].[Faturamento], BDESC)'
+MEMBER [Measures].[Faturamento de Vendas] AS
+'[Measures].[Faturamento]', FORMAT_STRING = '#,###.##'
+Select ( { [Cidades] } ) On Rows,
+( { [Measures].[Faturamento de Vendas] } ) On Columns 
+From [COMPLETO]
+WHERE [Tempo].[Ano].&[2014]
+
+---------------------------------------------
+
+
+-- Desta forma podemos mostrar o RANK
+
+WITH SET [Cidades] AS
+'ORDER ( [Cliente].[Hierarquia Geográfica].[Nível Cidade].Members, [Measures].[Faturamento], BDESC)'
+MEMBER [Measures].[Faturamento de Vendas] AS
+'[Measures].[Faturamento]', FORMAT_STRING = "#,###.##"
+MEMBER [Measures].[Posição no Rank] AS
+'RANK( [Cliente].[Hierarquia Geográfica].Currentmember, [Cidades] )' , FORMAT_STRING = "#;#;-"
+Select ( { [Cidades] } ) On Rows,
+( { [Measures].[Faturamento de Vendas], [Measures].[Posição no Rank] } ) On Columns 
+From [COMPLETO]
+WHERE [Tempo].[Ano].&[2014]
+
+------------------------------------------------
+
+-- Mostra o Numero de elementos que estou trabalhando
+
+WITH SET [Cidades] AS
+'ORDER ( [Cliente].[Hierarquia Geográfica].[Nível Cidade].Members, [Measures].[Faturamento], BDESC)'
+MEMBER [Measures].[Faturamento de Vendas] AS
+'[Measures].[Faturamento]', FORMAT_STRING = "#,###.##"
+MEMBER [Measures].[Posição no Rank] AS
+'RANK( [Cliente].[Hierarquia Geográfica].Currentmember, [Cidades] )' , FORMAT_STRING = "#;#;-"
+MEMBER [Measures].[Contador de Cidades] AS
+' [Cliente].[Hierarquia Geográfica].[Nível Cidade].Count' , FORMAT_STRING = "#;#;-"
+Select ( { [Cidades] } ) On Rows,
+( { [Measures].[Faturamento de Vendas], [Measures].[Posição no Rank], [Measures].[Contador de Cidades] } ) On Columns 
+From [COMPLETO]
+WHERE [Tempo].[Ano].&[2014]

@@ -1,0 +1,53 @@
+-- Criamos um member com o próprio faturamento apenas para utilizar o FORMAT_STRING
+
+WITH MEMBER [Measures].[Faturamento de Vendas] AS
+'[Measures].[Faturamento]', FORMAT_STRING = '#,###.## '
+Select ( { [Cliente].[Hierarquia Geográfica].[Nível Cidade].Members } ) On Rows,
+( { [Tempo].[Hierarquia do Mês e Ano].[Ano].&[2014] } ) On Columns
+From [COMPLETO]
+WHERE [Measures].[Faturamento de Vendas]
+
+--------------------------------------------------------------
+
+-- Desta forma selecionamos em ordem crescente
+
+WITH MEMBER [Measures].[Faturamento de Vendas] AS
+'[Measures].[Faturamento]', FORMAT_STRING = '#,###.## '
+Select 
+ORDER (
+{ [Cliente].[Hierarquia Geográfica].[Nível Cidade].Members }, 
+[Measures].[Faturamento], BDESC)
+On Rows,
+( { [Tempo].[Hierarquia do Mês e Ano].[Ano].&[2014] } ) On Columns
+From [COMPLETO]
+WHERE [Measures].[Faturamento de Vendas]
+
+-----------------------------------------------------------
+
+-- Desta forma conseguimos ver as 3 cidades com mair faturamento. TopCount ()
+
+WITH MEMBER [Measures].[Faturamento de Vendas] AS
+'[Measures].[Faturamento]', FORMAT_STRING = '#,###.## '
+Select 
+ORDER ( 
+TopCount (
+{ [Cliente].[Hierarquia Geográfica].[Nível Cidade].Members }, 3, [Measures].[Faturamento] ) ,
+[Measures].[Faturamento], BDESC)
+On Rows,
+( { [Tempo].[Hierarquia do Mês e Ano].[Ano].&[2014] } ) On Columns
+From [COMPLETO]
+WHERE [Measures].[Faturamento de Vendas]
+
+-- Desta forma conseguimos ver as 3 piores cidades em relação a faturamento. BottomCount()
+
+WITH MEMBER [Measures].[Faturamento de Vendas] AS
+'[Measures].[Faturamento]', FORMAT_STRING = '#,###.## '
+Select 
+ORDER ( 
+BottomCount (
+{ [Cliente].[Hierarquia Geográfica].[Nível Cidade].Members }, 3, [Measures].[Faturamento] ) ,
+[Measures].[Faturamento], BDESC)
+On Rows,
+( { [Tempo].[Hierarquia do Mês e Ano].[Ano].&[2014] } ) On Columns
+From [COMPLETO]
+WHERE [Measures].[Faturamento de Vendas]

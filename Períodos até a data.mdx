@@ -1,0 +1,32 @@
+Select Non Empty ( {[Tempo].[Hierarquia do Mês e Ano].[Nível Mês e Ano].Members } ) On Rows,
+( { [Measures].[Faturamento] } ) On Columns
+From [COMPLETO]
+
+--------------------------------------------------
+
+-- Usando SUM + PeriodsToDate, conseguimos ir somando mes a mes, neste caso até o fim de cada ano
+
+WITH MEMBER [Measures].[Faturamento YTD] AS
+'SUM(PeriodsToDate([Tempo].[Hierarquia do Mês e Ano].[Ano],[Tempo].[Hierarquia do Mês e Ano].Currentmember) ,
+[Measures].[Faturamento])',
+FORMAT_STRING = '#,###.##'
+Select Non Empty ( {[Tempo].[Hierarquia do Mês e Ano].[Nível Mês e Ano].Members } ) On Rows,
+( { [Measures].[Faturamento], [Measures].[Faturamento YTD] } ) On Columns
+From [COMPLETO]
+
+---------------------------------------------------
+
+-- Neste caso conseguimos ver também os agregados por trimestre
+
+
+WITH MEMBER [Measures].[Faturamento YTD] AS
+'SUM(PeriodsToDate([Tempo].[Hierarquia do Mês e Ano].[Ano],[Tempo].[Hierarquia do Mês e Ano].Currentmember) ,
+[Measures].[Faturamento])',
+FORMAT_STRING = '#,###.##'
+MEMBER [Measures].[Faturamento QTD] AS
+'SUM(PeriodsToDate([Tempo].[Hierarquia do Mês e Ano].[Nível Trimestre e Ano],[Tempo].[Hierarquia do Mês e Ano].Currentmember) ,
+[Measures].[Faturamento])',
+FORMAT_STRING = '#,###.##'
+Select Non Empty ( {[Tempo].[Hierarquia do Mês e Ano].[Nível Mês e Ano].Members } ) On Rows,
+( { [Measures].[Faturamento], [Measures].[Faturamento YTD], [Measures].[Faturamento QTD] } ) On Columns
+From [COMPLETO]
