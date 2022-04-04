@@ -1,0 +1,63 @@
+-- Análise de Pareto De Clientes
+
+WITH 
+SET [CLIENTES] AS  -- Ordeno os clientes pelo faturamento do maior para o menor
+'ORDER([Cliente].[Hierarquia Geográfica].[Nível Cliente],[Measures].[Faturamento], BDESC) '
+MEMBER [Measures].[Posição no Rank] AS -- Desta Forma conseguimos contruir um rank 
+'RANK([Cliente].[Hierarquia Geográfica].Currentmember, [CLIENTES])', FORMAT_STRING = "#;#;-"
+MEMBER [Measures].[Faturamento de Vendas] AS  -- Apenas formatando para melhor visualização
+'[Measures].[Faturamento]', FORMAT_STRING = '##,###.00'
+MEMBER [Measures].[% Vendas] AS -- Criando um percentual das vendas
+'[Measures].[Faturamento] / ([Measures].[Faturamento], [Cliente].[Hierarquia Geográfica].[All])',
+FORMAT_STRING = '#,###.## %'
+MEMBER [Measures].[Faturamento Acumulado] AS -- Somamos um a um de acordo com o Rank
+'SUM(HEAD([CLIENTES],[Measures].[Posição no Rank]), [Measures].[Faturamento])',
+FORMAT_STRING = '#,###.##'
+MEMBER [Measures].[Total de Clientes] AS -- Descobrimos o numero total de Clientes
+'[CLIENTES].COUNT', FORMAT_STRING = "#;#;-"
+MEMBER [Measures].[Percentual de Numero CLientes] AS -- Dividimos o Numero de Clientes, pela sua posição no RANK
+'[Measures].[Posição no Rank] / [Measures].[Total de Clientes]', FORMAT_STRING = '#,###.## %'
+MEMBER [Measures].[% Vendas Acumuladas] AS -- Reutilizamos a [Faturamento Acumulado], apenas trocando [Faturamento] por [% Faturamento]
+'SUM(HEAD([CLIENTES],[Measures].[Posição no Rank]),[Measures].[% Vendas])',
+FORMAT_STRING = '#,###.## %'
+SELECT ( { [CLIENTES] } ) ON ROWS,
+( { [Measures].[Faturamento de Vendas]
+, [Measures].[% Vendas Acumuladas]
+, [Measures].[Percentual de Numero CLientes] } ) ON COLUMNS
+FROM [COMPLETO]
+WHERE [Tempo].[Ano].&[2014] 
+
+
+
+------------------------//--------------------------------
+
+-- Análise de Pareto de Marcas
+
+WITH
+SET [Marca] AS -- Ordenando as Marcas
+'ORDER([Produto].[Hierarquia de Produtos].[Nível Marca], [Measures].[Margem], BDESC)' 
+MEMBER [Measures].[Rank das Marcas] AS -- Criando um Rank
+'RANK([Produto].[Hierarquia de Produtos].Currentmember, [Marca])', FORMAT_STRING = "#;#;-"
+MEMBER [Measures].[Margem_2] AS -- Apenas para melhor Visualizar
+'[Measures].[Margem]', FORMAT_STRING = '##,###.##'
+MEMBER [Measures].[% Margem] AS  -- percentual de participação da margem para cada marca
+'[Measures].[Margem] / ([Measures].[Margem], [Produto].[Hierarquia de Produtos].[All])',
+FORMAT_STRING = '#,###.## %'
+MEMBER [Measures].[Margem Acumulada] AS -- Somamos um a um de acordo com o Rank
+'SUM(HEAD([Marca], [Measures].[Rank das Marcas]), [Measures].[Margem])',
+FORMAT_STRING = '#,###.##'
+MEMBER [Measures].[Numero Total de Marcas] AS -- Descobrimos o numero total de Marcas
+'[Marca].COUNT', FORMAT_STRING = "#;#;-"
+MEMBER [Measures].[Percentual de Participação] AS -- Dividimos o Numero de Marcas, pela sua posição no RANK
+'[Measures].[Rank das Marcas] / [Measures].[Numero Total de Marcas]', FORMAT_STRING = '#,###.00 %'
+MEMBER [Measures].[% Margem Acumulada] AS -- Reutilizamos a [Margem Acumulada], apenas trocando [Margem] por [% Margem]
+'SUM(HEAD([Marca], [Measures].[Rank das Marcas]), [Measures].[% Margem])',
+FORMAT_STRING = '#,###.## %'
+Select Non Empty ( { [Marca] } ) On Rows,
+( {[Measures].[Margem_2]
+, [Measures].[% Margem Acumulada]
+, [Measures].[Percentual de Participação] } ) On Columns
+From [COMPLETO]
+Where [Tempo].[Ano].&[2014]
+
+
